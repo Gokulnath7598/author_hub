@@ -36,39 +36,43 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
     Map<String, String>? queryToAPI;
     bool dataAvailable = false;
 
-    if(event.isInitialSync){
+    if (event.isInitialSync) {
+
+      // check if local data available
       final List<Message> existingMessages =
-      await MessageDBHelper.getAllMessages();
+          await MessageDBHelper.getAllMessages();
       dataAvailable = !Utils.nullOrEmptyList(existingMessages);
 
-      if(dataAvailable){
+      if (dataAvailable) {
+        // if local data available use it
         emit(getMessagesSuccess..messages = existingMessages);
-      }else{
+      } else {
+
+        // fetch data from API
         final MessageResponse? authorResponse =
-        await messageService.getMessages(queryToAPI: queryToAPI);
+            await messageService.getMessages(queryToAPI: queryToAPI);
 
         PreferencesClient(prefs: prefs)
             .setUserPageToken(token: authorResponse?.pageToken);
 
         MessageDBHelper.clearAllMessages();
         MessageDBHelper.syncMessages(authorResponse?.messages ?? <Message>[]);
-        final List<Message> messages =
-        await MessageDBHelper.getAllMessages();
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
         emit(getMessagesSuccess..messages = messages);
       }
-    }else{
-      if(!event.isRefresh){
+    } else {
+      if (!event.isRefresh) {
         if (!Utils.nullOrEmpty(token)) {
           queryToAPI = Utils.getHeader(token);
         }
       }
       final MessageResponse? authorResponse =
-      await messageService.getMessages(queryToAPI: queryToAPI);
+          await messageService.getMessages(queryToAPI: queryToAPI);
 
       PreferencesClient(prefs: prefs)
           .setUserPageToken(token: authorResponse?.pageToken);
 
-      if(event.isRefresh){
+      if (event.isRefresh) {
         MessageDBHelper.clearAllMessages();
       }
 
@@ -81,7 +85,7 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
       } else {
         // searching the data from DB
         final List<Message> messages =
-        await MessageDBHelper.searchMessage(event.searchText!);
+            await MessageDBHelper.searchMessage(event.searchText!);
 
         emit(searchMessagesSuccess..messages = messages);
       }

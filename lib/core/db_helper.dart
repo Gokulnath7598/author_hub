@@ -1,6 +1,7 @@
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 import '../models/messages_response.dart';
+import 'utils/utils.dart';
 
 class MessageDBHelper {
   static const String _databaseName = 'message.db';
@@ -39,16 +40,7 @@ class MessageDBHelper {
     final Database db = await getDatabase();
     final List<Map<String, dynamic>> maps = await db.query(_tableName);
     return List<Message>.generate(maps.length, (int i) {
-      return Message(
-        id: maps[i]['id'] as int?,
-        content: maps[i]['content'] as String?,
-        updated: maps[i]['updated'] as String?,
-        isFavourite: (maps[i]['is_favourite'] == 1) as bool?,
-        author: Author(
-          name: maps[i]['author_name'] as String?,
-          photoUrl: maps[i]['author_photoUrl'] as String?,
-        ),
-      );
+      return Utils.constructMessageObject(maps[i]);
     });
   }
 
@@ -73,16 +65,7 @@ class MessageDBHelper {
 
     if (result.isNotEmpty) {
       final Map<String, dynamic> messageJson = result.first;
-      return Message(
-        id: messageJson['id'] as int?,
-        content: messageJson['content'] as String?,
-        updated: messageJson['updated'] as String?,
-        isFavourite: (messageJson['is_favourite'] == 1) as bool?,
-        author: Author(
-          name: messageJson['author_name'] as String?,
-          photoUrl: messageJson['author_photoUrl'] as String?,
-        ),
-      );
+      return Utils.constructMessageObject(messageJson);
     }
     return null;
   }
@@ -94,14 +77,7 @@ class MessageDBHelper {
     final Batch batch = db.batch();
 
     for (final Message message in messages) {
-      batch.insert(_tableName, <String, Object?>{
-        'id': message.id,
-        'content': message.content,
-        'updated': message.updated,
-        'is_favourite': (message.isFavourite ?? false) ? 1:0,
-        'author_name': message.author?.name,
-        'author_photoUrl': message.author?.photoUrl,
-      });
+      batch.insert(_tableName, Utils.constructMessageJSON(message));
     }
 
     await batch.commit();
@@ -117,31 +93,16 @@ class MessageDBHelper {
     );
 
     return List<Message>.generate(maps.length, (int i) {
-      return Message(
-        id: maps[i]['id'] as int?,
-        content: maps[i]['content'] as String?,
-        updated: maps[i]['updated'] as String?,
-        isFavourite: (maps[i]['is_favourite'] == 1) as bool?,
-        author: Author(
-          name: maps[i]['author_name'] as String?,
-          photoUrl: maps[i]['author_photoUrl'] as String?,
-        ),
-      );
+      return Utils.constructMessageObject(maps[i]);
     });
   }
 
+  // search table data
   static Future<int> updateFavourite({required Message? message}) async {
     final Database db = await getDatabase();
     return db.update(
       _tableName,
-      <String, Object?>{
-        'id': message?.id,
-        'content': message?.content,
-        'updated': message?.updated,
-        'is_favourite': !(message?.isFavourite ?? false) ? 1:0,
-        'author_name': message?.author?.name,
-        'author_photoUrl': message?.author?.photoUrl,
-      },
+      Utils.constructMessageJSON(message),
       where: 'id = ?',
       whereArgs: <Object?>[message?.id],
     );

@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../models/messages_response.dart';
+
 class Utils {
 
   static bool nullOrEmpty(String? text){
@@ -39,7 +41,32 @@ class Utils {
     };
   }
 
+  static Message constructMessageObject(Map<String, dynamic> messageJSON) {
+    return Message(
+      id: messageJSON['id'] as int?,
+      content: messageJSON['content'] as String?,
+      updated: messageJSON['updated'] as String?,
+      isFavourite: (messageJSON['is_favourite'] == 1) as bool?,
+      author: Author(
+        name: messageJSON['author_name'] as String?,
+        photoUrl: messageJSON['author_photoUrl'] as String?,
+      ),
+    );
+  }
+
+  static Map<String, dynamic> constructMessageJSON(Message? message) {
+    return <String, Object?>{
+      'id': message?.id,
+      'content': message?.content,
+      'updated': message?.updated,
+      'is_favourite': (message?.isFavourite ?? false) ? 1:0,
+      'author_name': message?.author?.name,
+      'author_photoUrl': message?.author?.photoUrl,
+    };
+  }
+
   static MaterialPageRoute<dynamic> pushMethod(Widget value) =>
       MaterialPageRoute<void>(builder: (BuildContext context) => value);
 
+  
 }
