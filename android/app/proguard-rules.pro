@@ -1,0 +1,2 @@
+-keep class com.gokul.author_hub.BuildConfig { *; }
+-keep class com.gokul.author_hub.staging.BuildConfig { *; }
