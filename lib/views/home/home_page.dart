@@ -7,6 +7,7 @@ import '../../core/utils/utils.dart';
 import '../../models/messages_response.dart';
 import '../global_widgets/widget_helper.dart';
 import 'empty_screen.dart';
+import 'message_details_page.dart';
 import 'message_tile.dart';
 import 'search_bar.dart';
 
@@ -44,17 +45,20 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               body: SafeArea(
                 child: LazyLoadScrollView(
+                  scrollOffset: 150,
                   onEndOfPage: () {
                     if (!(state is MessageLoading ||
                         state is MessagePaginationLoading)) {
-                      messageBloc
-                          .add(GetMessages(searchText: _searchController.text));
+                      if(Utils.nullOrEmpty(_searchController.text) || !Utils.nullOrEmptyList(messageBloc.searchMessagesSuccess.messages)){
+                        messageBloc
+                            .add(GetMessages(searchText: _searchController.text));
+                      }
                     }
                   },
                   child: RefreshIndicator(
                     edgeOffset: 150,
                     onRefresh: () async {
-                      messageBloc.add(GetMessages(isRefresh: true));
+                      messageBloc.add(GetMessages(isRefresh: true, searchText: _searchController.text));
                     },
                     child: ListView(
                       padding: EdgeInsets.zero,
@@ -122,6 +126,10 @@ class _HomePageState extends State<HomePage> {
                                                       .messages;
                                           return MessageTile(
                                               message: messages?[index],
+                                              onTap: (){
+                                                Navigator.push(context, Utils.pushMethod(MessageDetailsPage(message: messages?[index], searchText: _searchController
+                                                    .text)));
+                                              },
                                               onFavourite: () {
                                                 messageBloc.add(UpdateFavourite(
                                                     message: messages?[index],

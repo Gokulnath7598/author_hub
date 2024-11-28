@@ -62,6 +62,31 @@ class MessageDBHelper {
     );
   }
 
+  // delete table data
+  static Future<Message?> getMessage({required int? id}) async {
+    final Database db = await getDatabase();
+    final List<Map<String, dynamic>> result = await db.query(
+      _tableName,
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+    );
+
+    if (result.isNotEmpty) {
+      final Map<String, dynamic> messageJson = result.first;
+      return Message(
+        id: messageJson['id'] as int?,
+        content: messageJson['content'] as String?,
+        updated: messageJson['updated'] as String?,
+        isFavourite: (messageJson['is_favourite'] == 1) as bool?,
+        author: Author(
+          name: messageJson['author_name'] as String?,
+          photoUrl: messageJson['author_photoUrl'] as String?,
+        ),
+      );
+    }
+    return null;
+  }
+
   // sync table data
   static Future<void> syncMessages(List<Message> messages) async {
 

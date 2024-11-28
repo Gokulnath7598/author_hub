@@ -18,10 +18,11 @@ class SearchMessages extends MessageEvent {
 }
 
 class UpdateFavourite extends MessageEvent {
-  UpdateFavourite({required this.message, this.searchText});
+  UpdateFavourite({required this.message, this.searchText, this.isDetailsPage = false});
 
   final Message? message;
   final String? searchText;
+  final bool isDetailsPage;
 }
 
 class DeleteMessage extends MessageEvent {

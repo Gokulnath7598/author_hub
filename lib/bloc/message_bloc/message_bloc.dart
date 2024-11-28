@@ -9,6 +9,7 @@ import '../../core/preference_client/preference_client.dart';
 import '../../core/utils/utils.dart';
 import '../../models/messages_response.dart';
 import '../../views/global_widgets/toast_helper.dart';
+import '../../views/home/message_details_page.dart';
 
 part 'message_event.dart';
 
@@ -94,15 +95,20 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
       // update the data from DB
       await MessageDBHelper.updateFavourite(message: event.message);
 
+      Message? currentMessage;
+      if(event.isDetailsPage){
+        currentMessage = await MessageDBHelper.getMessage(id: event.message?.id);
+      }
+
       if(Utils.nullOrEmpty(event.searchText)){
         final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-        emit(getMessagesSuccess..messages = messages);
+        emit(getMessagesSuccess..messages = messages ..searchText = event.searchText ..currentMessage = currentMessage);
       }else{
         // searching the data from DB
         final List<Message> messages = await MessageDBHelper.searchMessage(event.searchText!);
 
-        emit(searchMessagesSuccess..messages = messages);
+        emit(searchMessagesSuccess..messages = messages ..searchText = event.searchText ..currentMessage = currentMessage);
       }
   }
 
@@ -155,6 +161,20 @@ Future<void> onAuthBlocChange(
         ToastHelper.failureToast(
             context: context,
             message: '${currentState.errorCode} : ${currentState.errorMsg}');
+      }
+    case const (GetMessagesSuccess):
+      final GetMessagesSuccess currentState = state as GetMessagesSuccess;
+      if (context.mounted) {
+        if(currentState.currentMessage != null){
+          Navigator.pushReplacement(context, Utils.pushMethod(MessageDetailsPage(message: currentState.currentMessage, searchText: currentState.searchText,)));
+        }
+      }
+    case const (SearchMessagesSuccess):
+      final SearchMessagesSuccess currentState = state as SearchMessagesSuccess;
+      if (context.mounted) {
+        if(currentState.currentMessage != null){
+          Navigator.pushReplacement(context, Utils.pushMethod(MessageDetailsPage(message: currentState.currentMessage, searchText: currentState.searchText)));
+        }
       }
   }
 }

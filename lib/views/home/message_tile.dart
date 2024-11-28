@@ -4,20 +4,18 @@ import '../../core/utils/utils.dart';
 import '../../models/messages_response.dart';
 import '../global_widgets/widget_helper.dart';
 import 'delete_popup.dart';
-import 'message_details_page.dart';
 
 class MessageTile extends StatelessWidget {
-  const MessageTile({super.key, required this.message, required this.onFavourite, required this.onDelete});
+  const MessageTile({super.key, required this.message, required this.onFavourite, required this.onDelete, required this.onTap});
   final Message? message;
   final void Function() onFavourite;
   final void Function() onDelete;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        Navigator.push(context, Utils.pushMethod(MessageDetailsPage(message: message)));
-      },
+      onTap: onTap,
       child: Container(
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[100]!),
