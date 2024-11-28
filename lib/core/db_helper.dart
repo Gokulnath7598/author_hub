@@ -83,7 +83,7 @@ class MessageDBHelper {
   }
 
   // search table data
-  static Future<List<Message>> searchItemsByName(String name) async {
+  static Future<List<Message>> searchMessage(String name) async {
     final Database db = await getDatabase();
     final List<Map<String, dynamic>> maps = await db.query(
       'message',
@@ -106,8 +106,8 @@ class MessageDBHelper {
   }
 
   static Future<int> updateFavourite({required Message? message}) async {
-    final db = await getDatabase();
-    return await db.update(
+    final Database db = await getDatabase();
+    return db.update(
       _tableName,
       <String, Object?>{
         'id': message?.id,
@@ -118,7 +118,7 @@ class MessageDBHelper {
         'author_photoUrl': message?.author?.photoUrl,
       },
       where: 'id = ?',
-      whereArgs: [message?.id],
+      whereArgs: <Object?>[message?.id],
     );
   }
 }

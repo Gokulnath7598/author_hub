@@ -55,232 +55,237 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context, MessageState state) {
         return Scaffold(
           body: SafeArea(
-            child: LazyLoadScrollView(
-              onEndOfPage: () {
-                if (!(state is MessageLoading ||
-                        state is MessagePaginationLoading)) {
-                  messageBloc.add(GetMessages());
-                }
-              },
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  messageBloc.add(GetMessages(isRefresh: true));
-                },
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.w, vertical: 10.h),
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: (String searchText) {
-                          fromCancelable(getTranslation(searchText))
-                              .then((dynamic value) {
-                            messageBloc
-                                .add(SearchMessages(searchText: searchText));
-                          });
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search...',
-                          suffixIcon:
-                              const Icon(Icons.search, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                            borderSide: const BorderSide(
-                              color: Colors
-                                  .transparent, // Make the border transparent
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                            borderSide: const BorderSide(
-                              color: Colors
-                                  .transparent, // Make the border transparent
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                            borderSide: const BorderSide(
-                              color: Colors
-                                  .redAccent, // Make the border transparent
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                        ),
-                      ),
-                    ),
-                    if (state is MessageLoading)
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 10,
-                          itemBuilder: (BuildContext ctx, int index) =>
-                              ListTile(
-                                title: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius:
-                                            BorderRadius.circular(20.r)),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15.w, vertical: 10.h),
-                                    child: Row(
-                                      children: <Widget>[
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50.r),
-                                          child: Container(
-                                              color: Colors.black12,
-                                              width: 50.h,
-                                              height: 50.h),
-                                        ),
-                                        getSpace(0, 10.w),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Container(
-                                                  color: Colors.black12,
-                                                  height: 15.h),
-                                              getSpace(5.h, 0),
-                                              Container(
-                                                  color: Colors.black12,
-                                                  height: 10.h)
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    )),
-                              ))
-                    else
-                      Utils.nullOrEmptyList(
-                              Utils.nullOrEmpty(_searchController.text)
-                                  ? messageBloc.getMessagesSuccess.messages
-                                  : messageBloc.searchMessagesSuccess.messages)
-                          ? ListView(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 40.w, vertical: 120.h),
-                                  child: const Text(
-                                    'No Authors Available now, Please Try after sometime',
-                                    textAlign: TextAlign.center,
-                                  ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                LazyLoadScrollView(
+                  onEndOfPage: () {
+                    if (!(state is MessageLoading ||
+                            state is MessagePaginationLoading)) {
+                      messageBloc.add(GetMessages(searchText: _searchController.text));
+                    }
+                  },
+                  child: RefreshIndicator(
+                    edgeOffset: 150,
+                    onRefresh: () async {
+                      messageBloc.add(GetMessages(isRefresh: true));
+                    },
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 10.h),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (String searchText) {
+                              fromCancelable(getTranslation(searchText))
+                                  .then((dynamic value) {
+                                messageBloc
+                                    .add(SearchMessages(searchText: searchText));
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              suffixIcon:
+                                  const Icon(Icons.search, color: Colors.grey),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.r),
+                                borderSide: const BorderSide(
+                                  color: Colors
+                                      .transparent, // Make the border transparent
                                 ),
-                              ],
-                            )
-                          : ListView.builder(
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.r),
+                                borderSide: const BorderSide(
+                                  color: Colors
+                                      .transparent, // Make the border transparent
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.r),
+                                borderSide: const BorderSide(
+                                  color: Colors
+                                      .redAccent, // Make the border transparent
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                            ),
+                          ),
+                        ),
+                        if (state is MessageLoading)
+                          ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  Utils.nullOrEmpty(_searchController.text)
-                                      ? messageBloc
-                                          .getMessagesSuccess.messages?.length
-                                      : messageBloc.searchMessagesSuccess.messages
-                                          ?.length,
-                              itemBuilder: (BuildContext ctx, int index) {
-                                final List<Message>? messages =
-                                    Utils.nullOrEmpty(_searchController.text)
-                                        ? messageBloc.getMessagesSuccess.messages
-                                        : messageBloc
-                                            .searchMessagesSuccess.messages;
-                                return Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius:
-                                            BorderRadius.circular(20.r)),
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 10.w, vertical: 5.h),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15.w, vertical: 10.h),
-                                    child: Row(
-                                      children: <Widget>[
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50.r),
-                                          child: Image.network(
-                                              Utils.nullOrEmpty(messages?[index]
-                                                      .author
-                                                      ?.photoUrl)
-                                                  ? 'https://picsum.photos/200'
-                                                  : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/${messages?[index].author?.photoUrl}',
-                                              height: 50.h,
-                                              width: 50.h),
-                                        ),
-                                        getSpace(0, 10.w),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                  messages?[index]
-                                                          .author
-                                                          ?.name ??
-                                                      '',
-                                                  style: textTheme.bodyLarge),
-                                              Text(
-                                                  Utils.yearsAgo(
-                                                      messages?[index].updated),
-                                                  style: textTheme.bodySmall),
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
+                              itemCount: 10,
+                              itemBuilder: (BuildContext ctx, int index) =>
+                                  ListTile(
+                                    title: Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(20.r)),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15.w, vertical: 10.h),
+                                        child: Row(
                                           children: <Widget>[
-                                            GestureDetector(
-                                              onTap: (){
-                                                messageBloc.add(UpdateFavourite(message: messages?[index]));
-                                              },
-                                              child: SvgPicture.asset(AppAssets.heart,
-                                                  color: (messages?[index].isFavourite ?? false) ? Colors.redAccent:Colors.black12),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.r),
+                                              child: Image.asset(
+                                                  AppAssets.logo,
+                                                  width: 50.h,
+                                                  height: 50.h),
                                             ),
                                             getSpace(0, 10.w),
-                                            GestureDetector(
-                                              onTap:(){
-                                                messageBloc.add(DeleteMessage(message: messages?[index]));
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.r),
-                                                    border: Border.all(
-                                                        color: Colors.redAccent,
-                                                        width: 2.sp)),
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.h,
-                                                      horizontal: 6.w),
-                                                  child: Text('Delete',
-                                                      style: textTheme.bodySmall
-                                                          ?.copyWith(
-                                                              color: Colors
-                                                                  .redAccent)),
-                                                ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Container(
+                                                      color: Colors.black12,
+                                                      height: 15.h),
+                                                  getSpace(5.h, 0),
+                                                  Container(
+                                                      color: Colors.black12,
+                                                      height: 10.h)
+                                                ],
                                               ),
                                             )
                                           ],
-                                        )
-                                      ],
-                                    ));
-                              }),
-                    if (state is MessagePaginationLoading)
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                        child: const Text('Fetching data',
-                            textAlign: TextAlign.center),
-                      )
-                    else
-                      emptyBox(),
-                  ],
+                                        )),
+                                  ))
+                        else
+                          Utils.nullOrEmptyList(
+                                  Utils.nullOrEmpty(_searchController.text)
+                                      ? messageBloc.getMessagesSuccess.messages
+                                      : messageBloc.searchMessagesSuccess.messages)
+                              ? ListView(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 40.w, vertical: 120.h),
+                                      child: Text(
+                                        Utils.nullOrEmpty(_searchController.text) ?'No Authors Available now, Please Try after sometime':'No Authors Available',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount:
+                                      Utils.nullOrEmpty(_searchController.text)
+                                          ? messageBloc
+                                              .getMessagesSuccess.messages?.length
+                                          : messageBloc.searchMessagesSuccess.messages
+                                              ?.length,
+                                  itemBuilder: (BuildContext ctx, int index) {
+                                    final List<Message>? messages =
+                                        Utils.nullOrEmpty(_searchController.text)
+                                            ? messageBloc.getMessagesSuccess.messages
+                                            : messageBloc
+                                                .searchMessagesSuccess.messages;
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(20.r)),
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10.w, vertical: 5.h),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15.w, vertical: 10.h),
+                                        child: Row(
+                                          children: <Widget>[
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.r),
+                                              child: FadeInImage(
+                                                  height: 50.h,
+                                                  width: 50.h,
+                                                image: NetworkImage(Utils.nullOrEmpty(messages?[index]
+                                                    .author
+                                                    ?.photoUrl)
+                                                    ? 'https://picsum.photos/200'
+                                                    : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/${messages?[index].author?.photoUrl}'),
+                                                placeholder: const AssetImage(AppAssets.logo), // Replace with your asset path
+                                                fit: BoxFit.cover, // Adjust as needed
+                                              )
+                                            ),
+                                            getSpace(0, 10.w),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                      messages?[index]
+                                                              .author
+                                                              ?.name ??
+                                                          '',
+                                                      style: textTheme.bodyLarge),
+                                                  Text(
+                                                      Utils.yearsAgo(
+                                                          messages?[index].updated),
+                                                      style: textTheme.bodySmall),
+                                                ],
+                                              ),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    messageBloc.add(UpdateFavourite(message: messages?[index], searchText: _searchController.text));
+                                                  },
+                                                  child: SvgPicture.asset(AppAssets.heart,
+                                                      color: (messages?[index].isFavourite ?? false) ? Colors.redAccent:Colors.black12),
+                                                ),
+                                                getSpace(0, 10.w),
+                                                GestureDetector(
+                                                  onTap:(){
+                                                    messageBloc.add(DeleteMessage(message: messages?[index], searchText: _searchController.text));
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                20.r),
+                                                        border: Border.all(
+                                                            color: Colors.redAccent,
+                                                            width: 2.sp)),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.symmetric(
+                                                          vertical: 4.h,
+                                                          horizontal: 6.w),
+                                                      child: Text('Delete',
+                                                          style: textTheme.bodySmall
+                                                              ?.copyWith(
+                                                                  color: Colors
+                                                                      .redAccent)),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ));
+                                  }),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (state is MessagePaginationLoading || state is UpdateMessageLoading)
+                  loaderWidget(context)
+                else
+                  emptyBox(),
+              ],
             ),
           ),
         );

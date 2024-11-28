@@ -58,19 +58,33 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
       }
 
       // fetching the data from DB
-      final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-      emit(getMessagesSuccess..messages = messages);
+      if(Utils.nullOrEmpty(event.searchText)){
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
+
+        emit(getMessagesSuccess..messages = messages);
+      }else{
+        // searching the data from DB
+        final List<Message> messages = await MessageDBHelper.searchMessage(event.searchText!);
+
+        emit(searchMessagesSuccess..messages = messages);
+      }
   }
 
   FutureOr<void> _searchMessages(
       SearchMessages event, Emitter<MessageState> emit) async {
       emit(MessageLoading());
 
-      // searching the data from DB
-      final List<Message> messages = await MessageDBHelper.searchItemsByName(event.searchText);
+      if(Utils.nullOrEmpty(event.searchText)){
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-      emit(searchMessagesSuccess..messages = messages);
+        emit(getMessagesSuccess..messages = messages);
+      }else{
+        // searching the data from DB
+        final List<Message> messages = await MessageDBHelper.searchMessage(event.searchText);
+
+        emit(searchMessagesSuccess..messages = messages);
+      }
   }
 
   FutureOr<void> _updateFavourite(
@@ -80,9 +94,16 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
       // update the data from DB
       await MessageDBHelper.updateFavourite(message: event.message);
 
-      final List<Message> messages = await MessageDBHelper.getAllMessages();
+      if(Utils.nullOrEmpty(event.searchText)){
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-      emit(getMessagesSuccess..messages = messages);
+        emit(getMessagesSuccess..messages = messages);
+      }else{
+        // searching the data from DB
+        final List<Message> messages = await MessageDBHelper.searchMessage(event.searchText!);
+
+        emit(searchMessagesSuccess..messages = messages);
+      }
   }
 
   FutureOr<void> _deleteMessage(
@@ -92,9 +113,16 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
       // delete the data from DB
       await MessageDBHelper.deleteMessage(message: event.message);
 
-      final List<Message> messages = await MessageDBHelper.getAllMessages();
+      if(Utils.nullOrEmpty(event.searchText)){
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-      emit(getMessagesSuccess..messages = messages);
+        emit(getMessagesSuccess..messages = messages);
+      }else{
+        // searching the data from DB
+        final List<Message> messages = await MessageDBHelper.searchMessage(event.searchText!);
+
+        emit(searchMessagesSuccess..messages = messages);
+      }
   }
 
   @override

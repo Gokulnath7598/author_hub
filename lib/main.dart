@@ -58,8 +58,7 @@ class AppState extends State<App> with WidgetsBindingObserver {
             navigatorKey: navigatorKey,
             theme: themeData,
             home: const InitPage(),
-            debugShowCheckedModeBanner:
-                AppConfig.shared.flavor == Flavor.staging,
+            debugShowCheckedModeBanner: false
           );
         });
   }

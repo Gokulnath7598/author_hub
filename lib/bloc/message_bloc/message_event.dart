@@ -4,10 +4,11 @@ part of 'message_bloc.dart';
 abstract class MessageEvent {}
 
 class GetMessages extends MessageEvent {
-  GetMessages({this.isInitialSync = false, this.isRefresh = false});
+  GetMessages({this.isInitialSync = false, this.isRefresh = false, this.searchText});
 
   final bool isInitialSync;
   final bool isRefresh;
+  final String? searchText;
 }
 
 class SearchMessages extends MessageEvent {
@@ -17,13 +18,15 @@ class SearchMessages extends MessageEvent {
 }
 
 class UpdateFavourite extends MessageEvent {
-  UpdateFavourite({required this.message});
+  UpdateFavourite({required this.message, this.searchText});
 
   final Message? message;
+  final String? searchText;
 }
 
 class DeleteMessage extends MessageEvent {
-  DeleteMessage({required this.message});
+  DeleteMessage({required this.message, this.searchText});
 
   final Message? message;
+  final String? searchText;
 }
