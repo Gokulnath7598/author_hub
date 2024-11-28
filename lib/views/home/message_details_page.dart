@@ -68,20 +68,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               children: [
                 getSpace(20.h, 0),
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(500.r),
-                    // Set the border radius
-                    child: Image.network(
-                      Utils.nullOrEmpty(currentMessage?.author?.photoUrl)
-                          ? 'https://picsum.photos/200'
-                          : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/${currentMessage?.author?.photoUrl}',
-                      height: 250.h,
-                      width: 250.h,
-                      fit: BoxFit.cover, // Adjust the fit as needed
-                    ),
-                  ),
-                ),
+                profilePic(size: 250.h, url: currentMessage?.author?.photoUrl),
                 getSpace(20.h, 0),
                 Text(currentMessage?.author?.name ?? '',
                     textAlign: TextAlign.center,

@@ -66,17 +66,19 @@ Widget favouriteAsset({required bool? isFavourite}) {
 }
 
 Widget profilePic({required double size, required String? url}){
-  return ClipRRect(
-      borderRadius:
-      BorderRadius.circular(500.r),
-      child: FadeInImage(
-        height: size,
-        width: size,
-        image: NetworkImage(Utils.nullOrEmpty(url)
-            ? 'https://picsum.photos/200'
-            : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/$url'),
-        placeholder: const AssetImage(AppAssets.logo), // Replace with your asset path
-        fit: BoxFit.cover, // Adjust as needed
-      )
+  return Center(
+    child: ClipRRect(
+        borderRadius:
+        BorderRadius.circular(500.r),
+        child: FadeInImage(
+          height: size,
+          width: size,
+          image: NetworkImage(Utils.nullOrEmpty(url)
+              ? 'https://picsum.photos/200'
+              : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/$url'),
+          placeholder: const AssetImage(AppAssets.logo), // Replace with your asset path
+          fit: BoxFit.cover, // Adjust as needed
+        )
+    ),
   );
 }
