@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> {
                       messageBloc.add(GetMessages(isRefresh: true, searchText: _searchController.text));
                     },
                     child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       children: <Widget>[
                         CustomSearchBar(

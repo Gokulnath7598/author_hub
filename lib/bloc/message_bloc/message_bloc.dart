@@ -32,46 +32,59 @@ class MessageBloc extends BaseBloc<MessageEvent, MessageState> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = await PreferencesClient(prefs: prefs).getPageToken();
+
     Map<String, String>? queryToAPI;
-
     bool dataAvailable = false;
-    if (event.isInitialSync) {
-      final List<Message> existingMessages =
-          await MessageDBHelper.getAllMessages();
-      dataAvailable = !Utils.nullOrEmptyList(existingMessages);
-    } else {
-      if (!event.isRefresh && !Utils.nullOrEmpty(token)) {
-        queryToAPI = Utils.getHeader(token);
-      }
-    }
 
-    if (event.isRefresh || !(event.isInitialSync && dataAvailable)) {
+    if(event.isInitialSync){
+      final List<Message> existingMessages =
+      await MessageDBHelper.getAllMessages();
+      dataAvailable = !Utils.nullOrEmptyList(existingMessages);
+
+      if(dataAvailable){
+        emit(getMessagesSuccess..messages = existingMessages);
+      }else{
+        final MessageResponse? authorResponse =
+        await messageService.getMessages(queryToAPI: queryToAPI);
+
+        PreferencesClient(prefs: prefs)
+            .setUserPageToken(token: authorResponse?.pageToken);
+
+        MessageDBHelper.clearAllMessages();
+        MessageDBHelper.syncMessages(authorResponse?.messages ?? <Message>[]);
+        final List<Message> messages =
+        await MessageDBHelper.getAllMessages();
+        emit(getMessagesSuccess..messages = messages);
+      }
+    }else{
+      if(!event.isRefresh){
+        if (!Utils.nullOrEmpty(token)) {
+          queryToAPI = Utils.getHeader(token);
+        }
+      }
       final MessageResponse? authorResponse =
-          await messageService.getMessages(queryToAPI: queryToAPI);
+      await messageService.getMessages(queryToAPI: queryToAPI);
 
       PreferencesClient(prefs: prefs)
           .setUserPageToken(token: authorResponse?.pageToken);
 
-      // clearing the DB Date
-      if (event.isInitialSync || event.isRefresh) {
+      if(event.isRefresh){
         MessageDBHelper.clearAllMessages();
       }
-      // inserting the data to DB
+
       MessageDBHelper.syncMessages(authorResponse?.messages ?? <Message>[]);
-    }
 
-    // fetching the data from DB
+      if (Utils.nullOrEmpty(event.searchText)) {
+        final List<Message> messages = await MessageDBHelper.getAllMessages();
 
-    if (Utils.nullOrEmpty(event.searchText)) {
-      final List<Message> messages = await MessageDBHelper.getAllMessages();
+        emit(getMessagesSuccess..messages = messages);
+      } else {
+        // searching the data from DB
+        final List<Message> messages =
+        await MessageDBHelper.searchMessage(event.searchText!);
 
-      emit(getMessagesSuccess..messages = messages);
-    } else {
-      // searching the data from DB
-      final List<Message> messages =
-          await MessageDBHelper.searchMessage(event.searchText!);
-
-      emit(searchMessagesSuccess..messages = messages);
+        emit(searchMessagesSuccess..messages = messages);
+      }
     }
   }
 
