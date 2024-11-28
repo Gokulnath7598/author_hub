@@ -42,5 +42,3 @@ class DeleteMessagesSuccess extends MessageState {
 
   String? searchText;
 }
-
-

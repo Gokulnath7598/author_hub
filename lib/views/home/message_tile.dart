@@ -40,7 +40,6 @@ class MessageTile extends StatelessWidget {
                   deleteButton(onTap:(){
                     showDialog<Widget>(
                       context: context,
-                      barrierDismissible: true, // Make the dialog non-dismissible
                       barrierColor:
                       Colors.black.withOpacity(0.5), // Set the background color to semi-transparent black
                       builder: (BuildContext context) {
@@ -69,7 +68,7 @@ class AuthorBadge extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Row(
-      children: [
+      children: <Widget>[
         profilePic(size: 50.h, url: message?.author?.photoUrl),
         getSpace(0, 10.w),
         Expanded(

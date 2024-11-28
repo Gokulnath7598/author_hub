@@ -25,7 +25,7 @@ class DeleteConfirmationPopup extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text('Delete this author?', style: textTheme.titleLarge),
                 getSpace(20.h, 0),
                 AuthorBadge(message: message),

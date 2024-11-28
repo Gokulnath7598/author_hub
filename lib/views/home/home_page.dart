@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                                       ? 'No Authors Available now, Please Try after sometime'
                                       : 'No Authors Available')
                               : Column(
-                                  children: [
+                                  children: <Widget>[
                                     if (Utils.nullOrEmpty(
                                         _searchController.text))
                                       emptyBox()
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                                                     searchText:
                                                     _searchController
                                                         .text));
-                                                Navigator.push(context, Utils.pushMethod(MessageDetailsPage()));
+                                                Navigator.push(context, Utils.pushMethod(const MessageDetailsPage()));
                                               },
                                               onFavourite: () {
                                                 messageBloc.add(UpdateFavourite(

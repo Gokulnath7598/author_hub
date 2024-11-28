@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../app_config.dart';
 import '../../bloc/message_bloc/message_bloc.dart';
-import '../../core/utils/utils.dart';
 import '../../models/messages_response.dart';
 import '../global_widgets/widget_helper.dart';
 
@@ -47,7 +45,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             titleSpacing: 0,
             title: Text('Details',
                 style: textTheme.titleLarge?.copyWith(fontSize: 22.sp)),
-            actions: [
+            actions: <Widget>[
               GestureDetector(
                 onTap: () {
                   messageBloc.add(UpdateFavourite(
@@ -66,7 +64,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
           body: SafeArea(
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
-              children: [
+              children: <Widget>[
                 getSpace(20.h, 0),
                 profilePic(size: 250.h, url: currentMessage?.author?.photoUrl),
                 getSpace(20.h, 0),
