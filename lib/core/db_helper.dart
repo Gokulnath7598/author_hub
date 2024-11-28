@@ -102,7 +102,7 @@ class MessageDBHelper {
     final Database db = await getDatabase();
     return db.update(
       _tableName,
-      Utils.constructMessageJSON(message),
+      Utils.constructMessageJSON(message, isFavouriteUpdate: true),
       where: 'id = ?',
       whereArgs: <Object?>[message?.id],
     );

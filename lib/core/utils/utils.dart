@@ -54,12 +54,12 @@ class Utils {
     );
   }
 
-  static Map<String, dynamic> constructMessageJSON(Message? message) {
+  static Map<String, dynamic> constructMessageJSON(Message? message, {bool isFavouriteUpdate = false}) {
     return <String, Object?>{
       'id': message?.id,
       'content': message?.content,
       'updated': message?.updated,
-      'is_favourite': (message?.isFavourite ?? false) ? 1:0,
+      'is_favourite': (isFavouriteUpdate ? !(message?.isFavourite ?? false):(message?.isFavourite ?? false)) ? 1:0,
       'author_name': message?.author?.name,
       'author_photoUrl': message?.author?.photoUrl,
     };
