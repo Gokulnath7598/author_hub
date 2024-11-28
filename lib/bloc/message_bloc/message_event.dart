@@ -11,6 +11,12 @@ class GetMessages extends MessageEvent {
   final String? searchText;
 }
 
+class GetLocalMessages extends MessageEvent {
+  GetLocalMessages({this.searchText});
+
+  final String? searchText;
+}
+
 class SearchMessages extends MessageEvent {
   SearchMessages({required this.searchText});
 
@@ -18,15 +24,21 @@ class SearchMessages extends MessageEvent {
 }
 
 class UpdateFavourite extends MessageEvent {
-  UpdateFavourite({required this.message, this.searchText, this.isDetailsPage = false});
+  UpdateFavourite({required this.message, this.searchText});
 
   final Message? message;
   final String? searchText;
-  final bool isDetailsPage;
 }
 
 class DeleteMessage extends MessageEvent {
   DeleteMessage({required this.message, this.searchText});
+
+  final Message? message;
+  final String? searchText;
+}
+
+class UpdateCurrentMessage extends MessageEvent {
+  UpdateCurrentMessage({required this.message, this.searchText});
 
   final Message? message;
   final String? searchText;

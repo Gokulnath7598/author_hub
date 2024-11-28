@@ -8,26 +8,20 @@ import '../../models/messages_response.dart';
 import '../global_widgets/widget_helper.dart';
 
 class MessageDetailsPage extends StatefulWidget {
-  const MessageDetailsPage(
-      {super.key, required this.message, required this.searchText});
-
-  final Message? message;
-  final String? searchText;
+  const MessageDetailsPage({super.key});
 
   @override
   State<MessageDetailsPage> createState() => _MessageDetailsPageState();
 }
 
 class _MessageDetailsPageState extends State<MessageDetailsPage> {
-  late final MessageBloc messageBloc;
+  late MessageBloc messageBloc;
+  Message? currentMessage;
 
   @override
   void initState() {
     messageBloc = BlocProvider.of<MessageBloc>(context);
-    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
-      messageBloc.stream.listen((MessageState state) =>
-          (mounted ? onAuthBlocChange(context: context, state: state) : null));
-    });
+    currentMessage = messageBloc.updateMessagesSuccess.currentMessage;
     super.initState();
   }
 
@@ -35,10 +29,15 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Scaffold(
+    return BlocListener<MessageBloc, MessageState>(
+        listener: (BuildContext context, MessageState state) {
+          if (state is UpdateMessagesSuccess) {
+            setState(() {
+              currentMessage = state.currentMessage;
+            });
+          }
+        },
+        child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
             leading: const BackButton(
@@ -52,14 +51,14 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
               GestureDetector(
                 onTap: () {
                   messageBloc.add(UpdateFavourite(
-                      message: widget.message,
-                      searchText: widget.searchText,
-                      isDetailsPage: true));
+                      message: currentMessage,
+                      searchText:
+                          messageBloc.updateMessagesSuccess.searchText));
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child:
-                      favouriteAsset(isFavourite: widget.message?.isFavourite),
+                      favouriteAsset(isFavourite: currentMessage?.isFavourite),
                 ),
               )
             ],
@@ -74,9 +73,9 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                     borderRadius: BorderRadius.circular(500.r),
                     // Set the border radius
                     child: Image.network(
-                      Utils.nullOrEmpty(widget.message?.author?.photoUrl)
+                      Utils.nullOrEmpty(currentMessage?.author?.photoUrl)
                           ? 'https://picsum.photos/200'
-                          : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/${widget.message?.author?.photoUrl}',
+                          : '${AppConfig.shared.scheme}://${AppConfig.shared.host}/${currentMessage?.author?.photoUrl}',
                       height: 250.h,
                       width: 250.h,
                       fit: BoxFit.cover, // Adjust the fit as needed
@@ -84,27 +83,16 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
                   ),
                 ),
                 getSpace(20.h, 0),
-                Text(widget.message?.author?.name ?? '',
+                Text(currentMessage?.author?.name ?? '',
                     textAlign: TextAlign.center,
                     style: textTheme.titleLarge?.copyWith(fontSize: 22.sp)),
                 getSpace(20.h, 0),
-                Text(widget.message?.content ?? '',
+                Text(currentMessage?.content ?? '',
                     textAlign: TextAlign.center,
                     style: textTheme.headlineMedium),
               ],
             ),
           ),
-        ),
-        BlocBuilder<MessageBloc, MessageState>(
-            builder: (BuildContext context, MessageState state) {
-          if (state is MessagePaginationLoading ||
-              state is UpdateMessageLoading) {
-            return loaderWidget(context);
-          } else {
-            return emptyBox();
-          }
-        })
-      ],
-    );
+        ));
   }
 }

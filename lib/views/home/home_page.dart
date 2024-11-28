@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     messageBloc = BlocProvider.of<MessageBloc>(context);
     WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
       messageBloc.stream.listen((MessageState state) =>
-          (mounted ? onAuthBlocChange(context: context, state: state) : null));
+          (mounted ? onMessageBlocChange(context: context, state: state, messageBloc: messageBloc) : null));
     });
     super.initState();
   }
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            Text('Search Result', style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+                                            Text('Search Results', style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
                                             Text(
                                                 Utils.getFoundText(messageBloc.searchMessagesSuccess.messages), style: textTheme.headlineMedium
                                                 ?.copyWith(color: Colors
@@ -127,8 +127,12 @@ class _HomePageState extends State<HomePage> {
                                           return MessageTile(
                                               message: messages?[index],
                                               onTap: (){
-                                                Navigator.push(context, Utils.pushMethod(MessageDetailsPage(message: messages?[index], searchText: _searchController
-                                                    .text)));
+                                                messageBloc.add(UpdateCurrentMessage(
+                                                    message: messages?[index],
+                                                    searchText:
+                                                    _searchController
+                                                        .text));
+                                                Navigator.push(context, Utils.pushMethod(MessageDetailsPage()));
                                               },
                                               onFavourite: () {
                                                 messageBloc.add(UpdateFavourite(
@@ -154,8 +158,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            if (state is MessagePaginationLoading ||
-                state is UpdateMessageLoading)
+            if (state is MessagePaginationLoading)
               loaderWidget(context)
             else
               emptyBox(),
