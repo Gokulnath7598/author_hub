@@ -1,4 +1,4 @@
-package com.gokul.author_hub
+package com.gokul.authorHub
 
 import io.flutter.embedding.android.FlutterActivity
 
