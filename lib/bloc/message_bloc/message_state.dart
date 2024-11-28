@@ -13,13 +13,17 @@ class UpdateMessageLoading extends MessageState {}
 class MessageError extends MessageState {}
 
 class GetMessagesSuccess extends MessageState {
-  GetMessagesSuccess({this.messages});
+  GetMessagesSuccess({this.messages, this.updateMessages, this.isDetailsPage = false});
 
   List<Message>? messages;
+  Message? updateMessages;
+  bool? isDetailsPage;
 }
 
 class SearchMessagesSuccess extends MessageState {
-  SearchMessagesSuccess({this.messages});
+  SearchMessagesSuccess({this.messages, this.updateMessages, this.isDetailsPage = false});
 
   List<Message>? messages;
+  Message? updateMessages;
+  bool? isDetailsPage;
 }

@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+
 class Utils {
 
   static bool nullOrEmpty(String? text){
@@ -23,11 +25,21 @@ class Utils {
     }
   }
 
+  static String getFoundText(List<dynamic>? list) {
+    if(nullOrEmptyList(list)){
+      return '0 found';
+    }else{
+      return '${list!.length} ${list.length == 1 ? 'found':'founds'}';
+    }
+  }
+
   static Map<String, String> getHeader(String? token) {
     return <String, String>{
-      // 'Content-Type': 'application/json',
       'pageToken': '$token',
     };
   }
+
+  static MaterialPageRoute<dynamic> pushMethod(Widget value) =>
+      MaterialPageRoute<void>(builder: (BuildContext context) => value);
 
 }
