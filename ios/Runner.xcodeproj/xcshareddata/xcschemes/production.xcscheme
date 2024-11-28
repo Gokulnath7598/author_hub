@@ -126,7 +126,7 @@
       buildConfiguration = "Debug-production">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Debug-production"
+      buildConfiguration = "Release-production"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

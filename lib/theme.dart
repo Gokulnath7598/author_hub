@@ -12,8 +12,11 @@ final ThemeData themeData = ThemeData(
     titleLarge: TextStyle(fontWeight: FontWeight.w700, fontSize: 20.sp, color: const Color(0xFF442C2E)),
     titleMedium: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp, color: const Color(0xFF442C2E)),
     titleSmall: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp, color: const Color(0xFF442C2E)),
-    bodyLarge: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.sp, color: const Color(0xFF442C2E)),
-    bodyMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp, color: const Color(0xFF442C2E)),
-    bodySmall: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.sp, color: const Color(0xFF442C2E)),
+    headlineLarge: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.sp, color: const Color(0xFF442C2E)),
+    headlineMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp, color: const Color(0xFF442C2E)),
+    headlineSmall: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.sp, color: const Color(0xFF442C2E)),
+    bodyLarge: TextStyle(fontWeight: FontWeight.w300, fontSize: 18.sp, color: const Color(0xFF442C2E)),
+    bodyMedium: TextStyle(fontWeight: FontWeight.w300, fontSize: 16.sp, color: const Color(0xFF442C2E)),
+    bodySmall: TextStyle(fontWeight: FontWeight.w300, fontSize: 13.sp, color: const Color(0xFF442C2E))
   ),
 );
